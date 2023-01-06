@@ -37,7 +37,16 @@ typedef struct audio_block_struct {
 
 static audio_block_t block_silent;
 
-uint16_t saw = 0;
+void defaultCbIsrDac(const uint32_t* end, uint32_t* dest)
+{
+    do {
+        *dest++ = 0;
+        *dest++ = 0;
+    } while (dest < end);
+}
+
+void (*callbackIsrDac)(const uint32_t* end, uint32_t* dest) = defaultCbIsrDac;
+
 void isrDac(Adafruit_ZeroDMA* dma)
 {
     const uint32_t* end;
@@ -55,15 +64,18 @@ void isrDac(Adafruit_ZeroDMA* dma)
         saddr = dac_buffer;
     }
 
-    do {
-        saw += 100;
-        *dest++ = saw;
-        *dest++ = saw;
-    } while (dest < end);
+    callbackIsrDac(end, dest);
 }
 
-void initDac()
+/**
+ * @brief Initialize the DAC and DMA for audio output
+ * 
+ * @param cb callback function to generate the audio output
+ */
+void initDac(void (*cb)(const uint32_t* end, uint32_t* dest) = defaultCbIsrDac)
 {
+    callbackIsrDac = cb;
+
     dma0 = new Adafruit_ZeroDMA();
     stat = dma0->allocate();
 
