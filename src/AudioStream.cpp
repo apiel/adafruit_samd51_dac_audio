@@ -236,7 +236,7 @@ void software_isr(void) // AudioStream::update_all()
 #else
 			uint32_t cycles = ARM_DWT_CYCCNT;
 #endif
-			p->update();
+			// p->update();
 			// TODO: traverse inputQueueArray and release
 			// any input blocks that weren't consumed?
 #if defined(ARDUINO_ARCH_SAMD)

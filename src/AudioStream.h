@@ -188,7 +188,6 @@ private:
 	AudioConnection *destination_list;
 	audio_block_t **inputQueue;
 	static bool update_scheduled;
-	virtual void update(void) = 0;
 	static AudioStream *first_update; // for update_all
 	AudioStream *next_update; // for update_all
 	static audio_block_t *memory_pool;

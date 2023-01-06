@@ -9,9 +9,8 @@ class AudioOutputAnalogStereo : public AudioStream
 {
 	public:
 	AudioOutputAnalogStereo(void) : AudioStream(2, inputQueueArray) { begin(); }
-	virtual void update(void);
 	void begin(void);
-	void analogReference(int ref);
+	// void analogReference(int ref);
 	private:
 	static audio_block_t *block_left_1st;
 	static audio_block_t *block_left_2nd;
