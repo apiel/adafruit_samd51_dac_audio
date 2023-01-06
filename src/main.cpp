@@ -40,32 +40,12 @@ typedef struct audio_block_struct
 
 static audio_block_t block_silent;
 
+
+uint16_t saw = 0;
 void DACisr(Adafruit_ZeroDMA *dma)
 {
-  const uint32_t *src_left, *src_right, *end;
+  const uint32_t *end;
   uint32_t *dest;
-  audio_block_t *block_left, *block_right;
-
-  short *bp;
-  uint32_t tone_phase = 120 * (2147483648.0 / 360.0);
-
-  // block_left = allocate();
-  // if (block_left)
-  // {
-  // 	bp = block_left->data;
-  // 	// for (int i = 0; i < AUDIO_BLOCK_SAMPLES; i++)
-  // 	// {
-  // 	// 	*bp++ = ((short)(tone_phase >> 15) * 10000) >> 15;
-  // 	// 	// phase and incr are both unsigned 32-bit fractions
-  // 	// 	// tone_phase += tone_incr;
-  // 	// 	tone_phase += 10;
-  // 	// }
-  // 	for (int i = 0; i < AUDIO_BLOCK_SAMPLES; i++)
-  // 	{
-  // 		*bp++ = random(-10000, 10000);
-  // 	}
-  // 	release(block_left);
-  // }
 
   if (saddr == dac_buffer)
   {
@@ -82,45 +62,14 @@ void DACisr(Adafruit_ZeroDMA *dma)
     saddr = dac_buffer;
   }
 
-  // block_left = block_left_1st;
-  // if (!block_left)
-  // 	block_left = &block_silent;
-  // block_right = block_right_1st;
-  // if (!block_right)
-  // 	block_right = &block_silent;
-
-  src_left = (const uint32_t *)(block_left->data);
-  src_right = (const uint32_t *)(block_right->data);
   do
   {
-    // // TODO: can this be optimized?
-    // uint32_t left = *src_left++;
-    // uint32_t right = *src_right++;
-    // uint32_t out1 = ((left & 0xFFFF) + 32768) >> 4;
-    // out1 |= (((right & 0xFFFF) + 32768) >> 4) << 16;
-    // uint32_t out2 = ((left >> 16) + 32768) >> 4;
-    // out2 |= (((right >> 16) + 32768) >> 4) << 16;
-    // *dest++ = out1;
-    // *dest++ = out2;
-    *dest++ = random(-10000, 10000);
-    *dest++ = random(-10000, 10000);
+    // *dest++ = random(-10000, 10000);
+    // *dest++ = random(-10000, 10000);
+    saw += 100;
+    *dest++ = saw;
+    *dest++ = saw;
   } while (dest < end);
-
-  // if (block_left != &block_silent)
-  // {
-  // 	release(block_left);
-  // 	block_left_1st = block_left_2nd;
-  // 	block_left_2nd = NULL;
-  // }
-  // if (block_right != &block_silent)
-  // {
-  // 	release(block_right);
-  // 	block_right_1st = block_right_2nd;
-  // 	block_right_2nd = NULL;
-  // }
-
-  // if (update_responsibility)
-  // 	update_all();
 }
 
 void DACinit()
